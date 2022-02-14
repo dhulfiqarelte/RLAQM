@@ -1,0 +1,42 @@
+import glob
+import matplotlib
+import matplotlib.pyplot as pyplt
+import glob
+import pandas
+
+
+baseFolder='log'
+
+
+def setParams():
+	matplotlib.rcParams['pdf.fonttype'] = 42
+	matplotlib.rcParams['ps.fonttype'] = 42
+	matplotlib.rcParams['agg.path.chunksize'] = 10000
+	#	 matplotlib.rcParams['text.usetex'] = True
+	params = {'legend.fontsize': 'medium',
+			 'figure.figsize': (10, 8),
+			'axes.labelsize': 'x-large',
+			'axes.titlesize':'x-large',
+			'xtick.labelsize':'x-large',
+			'ytick.labelsize':'x-large'}
+	pyplt.rcParams.update(params)
+
+def plot(number="*"):
+	global baseFolder
+	setParams()
+
+	for f in glob.glob(baseFolder+"/rewards-"+str(number)+".csv"):
+		newFilename = f[:-4].split("/")[-1]
+		df = pandas.read_csv(f,sep=';')
+		fig2 = pyplt.figure()
+		ax2 = fig2.add_subplot(111)
+
+		for lab in ['delayMs','Util','dropProb','reward']:
+			df.plot('time',lab,label=lab, ax=ax2,alpha=0.5)
+		ax2.legend()
+		ax2.grid()
+		pyplt.savefig(baseFolder+"/"+newFilename+".jpg",format='jpg', dpi=500,bbox_inches='tight')
+		pyplt.close(fig2)
+
+if __name__ == '__main__':
+	plot(0)
